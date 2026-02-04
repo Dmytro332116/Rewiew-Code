@@ -1,0 +1,40 @@
+<idea-plugin>
+    <id>com.rewiew.autofmt</id>
+    <name>Rewiew Code Formatter</name>
+    <vendor>Rewiew</vendor>
+
+    <description>
+        <![CDATA[
+        Autoformat and inspect CSS/JS/Twig on save and pre-commit without Node.js.
+        ]]>
+    </description>
+
+    <dependencies>
+        <plugin id="com.intellij.modules.platform"/>
+        <plugin id="com.jetbrains.php"/>
+        <plugin id="Git4Idea"/>
+    </dependencies>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="com.rewiew.autofmt.settings.AutoFormatSettingsService"/>
+        <projectConfigurable instance="com.rewiew.autofmt.settings.AutoFormatConfigurable"/>
+
+        <fileDocumentManagerListener implementation="com.rewiew.autofmt.save.AutoFormatOnSaveListener"/>
+        <checkinHandlerFactory implementation="com.rewiew.autofmt.vcs.AutoFormatCheckinHandlerFactory"/>
+        <notificationGroup id="RewiewAutoformat" displayType="BALLOON" isLogByDefault="true"/>
+        <localInspection language="Twig"
+                         shortName="RewiewTwigPrintSpacing"
+                         groupName="Rewiew"
+                         enabledByDefault="true"
+                         implementationClass="com.rewiew.autofmt.twig.RewiewTwigPrintSpacingInspection"/>
+    </extensions>
+
+    <actions>
+        <action id="com.rewiew.autofmt.InstallPreCommitHook"
+                class="com.rewiew.autofmt.vcs.InstallPreCommitHookAction"
+                text="Install/Update Pre-Commit Hook"
+                description="Install or update Git pre-commit hook for CSS/JS/Twig formatting and inspection">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

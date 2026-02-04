@@ -66,6 +66,14 @@ Notes:
 - Headless inspection requires a valid inspection profile XML.
 - Repo-local wrappers read `PHPSTORM_BIN` or `PHPSTORM_HOME` env vars.
 
+## Run Manually (Tools Menu)
+
+You can manually trigger formatting from the IDE:
+
+`Tools -> Format CSS/JS/Twig`
+
+This formats the currently selected files in the Project view using IDE code style.
+
 ## Twig Support
 
 This plugin relies on PhpStorm/Twig language support:

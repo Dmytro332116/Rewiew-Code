@@ -30,6 +30,12 @@
     </extensions>
 
     <actions>
+        <action id="com.rewiew.autofmt.RunAutoFormat"
+                class="com.rewiew.autofmt.actions.RunAutoFormatAction"
+                text="Format CSS/JS/Twig"
+                description="Format selected CSS/JS/Twig files using IDE code style">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
         <action id="com.rewiew.autofmt.InstallPreCommitHook"
                 class="com.rewiew.autofmt.vcs.InstallPreCommitHookAction"
                 text="Install/Update Pre-Commit Hook"

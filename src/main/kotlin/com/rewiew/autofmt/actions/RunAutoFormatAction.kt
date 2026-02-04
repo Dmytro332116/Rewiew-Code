@@ -1,15 +1,12 @@
 package com.rewiew.autofmt.actions
 
-import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiManager
 import com.rewiew.autofmt.settings.AutoFormatSettingsService
+import com.rewiew.autofmt.util.AutoFormatRunner
 import com.rewiew.autofmt.util.TargetFileType
 
 class RunAutoFormatAction : DumbAwareAction() {
@@ -32,17 +29,12 @@ class RunAutoFormatAction : DumbAwareAction() {
             return
         }
 
-        val psiManager = PsiManager.getInstance(project)
-        WriteCommandAction.runWriteCommandAction(project, "Rewiew Autoformat", null, Runnable {
-            targetFiles.forEach { vf ->
-                val psiFile = psiManager.findFile(vf) ?: return@forEach
-                if (!psiFile.isValid || !psiFile.isWritable) return@forEach
-                PsiDocumentManager.getInstance(project).commitAllDocuments()
-                ReformatCodeProcessor(project, psiFile, null, false).run()
-            }
-        })
+        var count = 0
+        targetFiles.forEach { vf ->
+            if (AutoFormatRunner.formatVirtualFile(project, vf, settings)) count++
+        }
 
-        notify(project, "Formatted ${targetFiles.size} file(s).", NotificationType.INFORMATION)
+        notify(project, "Formatted $count file(s).", NotificationType.INFORMATION)
     }
 
     private fun notify(project: com.intellij.openapi.project.Project, message: String, type: NotificationType) {

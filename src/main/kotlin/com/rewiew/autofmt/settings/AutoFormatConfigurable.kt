@@ -2,10 +2,13 @@ package com.rewiew.autofmt.settings
 
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import javax.swing.JComponent
+import javax.swing.JButton
+import com.rewiew.autofmt.util.AutoFormatRunner
 
 class AutoFormatConfigurable(private val project: Project) : SearchableConfigurable {
     private val settingsService = AutoFormatSettingsService.getInstance(project)
@@ -31,6 +34,23 @@ class AutoFormatConfigurable(private val project: Project) : SearchableConfigura
                 row {
                     checkBox("Format on save")
                         .bindSelected(::formatOnSave)
+                }
+            }
+            group("Quick Actions") {
+                row {
+                    val btn = JButton("Format All CSS/JS/Twig in Project")
+                    btn.addActionListener {
+                        val settings = settingsService.state
+                        ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                            {
+                                AutoFormatRunner.formatAll(project, settings)
+                            },
+                            "Formatting All Files",
+                            true,
+                            project
+                        )
+                    }
+                    cell(btn)
                 }
             }
             group("On Commit") {

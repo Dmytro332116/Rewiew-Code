@@ -107,7 +107,11 @@ class RunRewiewChecksAction : DumbAwareAction() {
         }
 
         val dbf = DocumentBuilderFactory.newInstance()
-        val issues = mutableListOf<String>()
+        val grouped = linkedMapOf(
+            "Twig/HTML" to mutableListOf<String>(),
+            "CSS" to mutableListOf<String>(),
+            "JavaScript" to mutableListOf<String>()
+        )
 
         xmlFiles.forEach { xml ->
             val doc = dbf.newDocumentBuilder().parse(xml.toFile())
@@ -119,6 +123,7 @@ class RunRewiewChecksAction : DumbAwareAction() {
                 var line = ""
                 var description = ""
                 var problemClass = ""
+                var column = ""
 
                 for (j in 0 until children.length) {
                     val c = children.item(j)
@@ -127,6 +132,7 @@ class RunRewiewChecksAction : DumbAwareAction() {
                         "line" -> line = c.textContent
                         "description" -> description = c.textContent
                         "problem_class" -> problemClass = c.textContent
+                        "column" -> column = c.textContent
                     }
                 }
 
@@ -141,14 +147,36 @@ class RunRewiewChecksAction : DumbAwareAction() {
                 val rel = normalized.removePrefix(basePath).trimStart('/', '\\')
                 val msg = description.ifBlank { problemClass.ifBlank { "Issue" } }
                 val lineStr = if (line.isNotBlank()) ":$line" else ""
-                issues.add("$rel$lineStr: $msg")
+                val colStr = if (column.isNotBlank()) ":$column" else ""
+                val suggestion = buildSuggestion(msg)
+
+                val entry = buildString {
+                    append(rel).append(lineStr).append(colStr).append(": ").append(msg)
+                    if (suggestion.isNotBlank()) {
+                        append("\n  -> ").append(suggestion)
+                    }
+                }
+
+                when {
+                    rel.lowercase().endsWith(".twig") -> grouped["Twig/HTML"]?.add(entry)
+                    rel.lowercase().endsWith(".css") -> grouped["CSS"]?.add(entry)
+                    rel.lowercase().endsWith(".js") || rel.lowercase().endsWith(".mjs") ||
+                        rel.lowercase().endsWith(".cjs") || rel.lowercase().endsWith(".jsx") ->
+                        grouped["JavaScript"]?.add(entry)
+                }
             }
         }
 
-        if (issues.isEmpty()) {
+        val allIssues = grouped.values.flatten()
+        if (allIssues.isEmpty()) {
             builder.append("No issues found for CSS/JS/Twig.\n")
         } else {
-            issues.forEach { builder.append(it).append("\n") }
+            grouped.forEach { (title, list) ->
+                if (list.isEmpty()) return@forEach
+                builder.append(title).append("\n")
+                list.forEach { builder.append(it).append("\n") }
+                builder.append("\n")
+            }
         }
 
         builder.append("\nNotes:\n")
@@ -156,6 +184,21 @@ class RunRewiewChecksAction : DumbAwareAction() {
         builder.append("- Some issues require manual fixes\n")
 
         return builder.toString()
+    }
+
+    private fun buildSuggestion(message: String): String {
+        val lower = message.lowercase()
+        return when {
+            lower.contains("kebab") || lower.contains("id/class") ->
+                "Use lowercase kebab-case (e.g. my-button)"
+            lower.contains("space") && lower.contains("{{") ->
+                "Add spaces inside {{ }}"
+            lower.contains("unused") ->
+                "Remove it or use it"
+            lower.contains("semicolon") ->
+                "Add missing semicolon"
+            else -> ""
+        }
     }
 
     private fun isSupportedFile(path: String): Boolean {

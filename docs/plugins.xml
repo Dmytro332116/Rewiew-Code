@@ -1,8 +1,0 @@
-<plugins>
-  <plugin id="com.rewiew.autofmt" version="0.1.0" url="https://dmytro332116.github.io/Plugin-PhpStorm-2-/rewiew-autofmt-0.1.0.zip">
-    <name>Rewiew Code Formatter</name>
-    <description>Autoformat and inspect CSS/JS/Twig on save and pre-commit without Node.js</description>
-    <vendor>Rewiew</vendor>
-    <idea-version since-build="243"/>
-  </plugin>
-</plugins>

@@ -28,8 +28,11 @@ To build and generate a custom plugin repository (for **Manage Plugin Repositori
    - `docs/<plugin-zip>.zip`
    - `docs/updatePlugins.xml`
 
-Use this URL in PhpStorm:
-`https://dmytro332116.github.io/Plugin-PhpStorm-2-/plugins.xml`
+Use this URL in PhpStorm (GitHub Pages):
+`https://dmytro332116.github.io/Rewiew-Code/updatePlugins.xml`
+
+If Pages are not enabled yet, use the raw GitHub URL:
+`https://raw.githubusercontent.com/Dmytro332116/Rewiew-Code/main/docs/updatePlugins.xml`
 
 ## Configuration
 

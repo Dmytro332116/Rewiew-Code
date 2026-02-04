@@ -13,6 +13,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.rewiew.autofmt.settings.AutoFormatSettingsService
+import com.rewiew.autofmt.util.CssAutoFixer
 import com.rewiew.autofmt.util.TargetFileType
 import com.rewiew.autofmt.util.TwigAutoFixer
 import java.nio.charset.StandardCharsets
@@ -55,6 +56,17 @@ class RunAutoFixAction : DumbAwareAction() {
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
             {
+                // CSS safe fixes first (helps formatter/cleanup handle syntax errors)
+                WriteCommandAction.runWriteCommandAction(project, "Rewiew CSS Auto-Fix", null, Runnable {
+                    psiFiles.forEach { psiFile ->
+                        val vf = psiFile.virtualFile ?: return@forEach
+                        if (vf.extension?.lowercase() != "css") return@forEach
+                        val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile) ?: return@forEach
+                        val (updated, _) = CssAutoFixer.applyAll(doc.text)
+                        if (updated != doc.text) doc.setText(updated)
+                    }
+                })
+
                 // Apply IDE cleanup/quick-fixes where available
                 CodeCleanupCodeProcessor(project, psiFiles.toTypedArray(), null, false).run()
 
@@ -109,6 +121,7 @@ class RunAutoFixAction : DumbAwareAction() {
             val rel = vf.path.removePrefix(basePath).trimStart('/', '\\')
             val diff = countAddedPunctuation(beforeText, afterText)
             sb.append(rel).append(":\n")
+            sb.append("  Added : ").append(diff.addedColons).append("\n")
             sb.append("  Added ;: ").append(diff.addedSemicolons).append("\n")
             sb.append("  Added (): ").append(diff.addedParens).append("\n")
             sb.append("  Added {}: ").append(diff.addedBraces).append("\n")
@@ -129,6 +142,9 @@ class RunAutoFixAction : DumbAwareAction() {
     private fun countAddedPunctuation(beforeText: String, afterText: String): PunctuationDiff {
         fun count(text: String, ch: Char): Int = text.count { it == ch }
 
+        val beforeColons = count(beforeText, ':')
+        val afterColons = count(afterText, ':')
+
         val beforeSemis = count(beforeText, ';')
         val afterSemis = count(afterText, ';')
 
@@ -142,6 +158,7 @@ class RunAutoFixAction : DumbAwareAction() {
         val afterBrackets = count(afterText, '[') + count(afterText, ']')
 
         return PunctuationDiff(
+            addedColons = (afterColons - beforeColons).coerceAtLeast(0),
             addedSemicolons = (afterSemis - beforeSemis).coerceAtLeast(0),
             addedParens = (afterParens - beforeParens).coerceAtLeast(0),
             addedBraces = (afterBraces - beforeBraces).coerceAtLeast(0),
@@ -150,6 +167,7 @@ class RunAutoFixAction : DumbAwareAction() {
     }
 
     private data class PunctuationDiff(
+        val addedColons: Int,
         val addedSemicolons: Int,
         val addedParens: Int,
         val addedBraces: Int,

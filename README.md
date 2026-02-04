@@ -76,6 +76,7 @@ This formats the currently selected files in the Project view using IDE code sty
 
 `Tools -> Auto-Fix CSS/JS/Twig`  
 Runs IDE cleanup + formatter + safe Twig fixes, and writes a report to `.idea/rewiew-autofix.txt`.
+Includes a CSS safe-fix that adds missing `:` / `;` and closes unbalanced `}` at EOF.
 
 `Tools -> Run Rewiew Checks (Report)`  
 Runs inspections and writes a readable report to `.idea/rewiew-report.txt`.

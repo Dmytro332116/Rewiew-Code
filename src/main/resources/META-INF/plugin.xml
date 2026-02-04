@@ -27,6 +27,11 @@
                          groupName="Rewiew"
                          enabledByDefault="true"
                          implementationClass="com.rewiew.autofmt.twig.RewiewTwigPrintSpacingInspection"/>
+        <localInspection language="Twig"
+                         shortName="RewiewTwigAttributeNaming"
+                         groupName="Rewiew"
+                         enabledByDefault="true"
+                         implementationClass="com.rewiew.autofmt.twig.RewiewTwigAttributeNamingInspection"/>
     </extensions>
 
     <actions>
@@ -35,6 +40,18 @@
                 text="Format CSS/JS/Twig"
                 description="Format selected CSS/JS/Twig files using IDE code style">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+        <action id="com.rewiew.autofmt.RunAutoFix"
+                class="com.rewiew.autofmt.actions.RunAutoFixAction"
+                text="Auto-Fix CSS/JS/Twig"
+                description="Run formatter and apply safe Twig fixes on selected files">
+            <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="com.rewiew.autofmt.RunAutoFormat"/>
+        </action>
+        <action id="com.rewiew.autofmt.RunRewiewChecks"
+                class="com.rewiew.autofmt.actions.RunRewiewChecksAction"
+                text="Run Rewiew Checks (Report)"
+                description="Run inspections and generate a readable report">
+            <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="com.rewiew.autofmt.RunAutoFix"/>
         </action>
         <action id="com.rewiew.autofmt.InstallPreCommitHook"
                 class="com.rewiew.autofmt.vcs.InstallPreCommitHookAction"

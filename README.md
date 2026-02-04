@@ -74,6 +74,15 @@ You can manually trigger formatting from the IDE:
 
 This formats the currently selected files in the Project view using IDE code style.
 
+### Checks and Auto-Fix
+
+`Tools -> Run Rewiew Checks (Report)`  
+Runs IDE inspections (no Node.js) and generates a readable report at:
+`.idea/rewiew-report.txt`
+
+`Tools -> Auto-Fix CSS/JS/Twig`  
+Runs formatter + safe Twig fixes (kebab-case for id/class and spacing inside `{{ }}`).
+
 ## Twig Support
 
 This plugin relies on PhpStorm/Twig language support:

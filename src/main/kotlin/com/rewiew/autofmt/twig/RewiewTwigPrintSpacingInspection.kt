@@ -132,31 +132,10 @@ class RewiewTwigPrintSpacingInspection : LocalInspectionTool() {
             val tagText = text.substring(startOffset, endOffset)
             if (!tagText.startsWith("{{") || !tagText.endsWith("}}")) return
 
-            val updated = normalizeSpacing(tagText)
+            val updated = com.rewiew.autofmt.util.TwigAutoFixer.fixPrintTagSpacing(tagText)
             if (updated == tagText) return
 
             document.replaceString(startOffset, endOffset, updated)
-        }
-
-        private fun normalizeSpacing(tagText: String): String {
-            if (tagText.length < 4) return tagText
-            val sb = StringBuilder(tagText)
-
-            // ensure space after '{{' unless whitespace control is used
-            if (!sb[2].isWhitespace() && sb[2] != '-') {
-                sb.insert(2, ' ')
-            }
-
-            // ensure space before '}}' unless whitespace control is used
-            val beforeCloseIndex = sb.length - 3
-            if (beforeCloseIndex >= 0) {
-                val ch = sb[beforeCloseIndex]
-                if (!ch.isWhitespace() && ch != '-') {
-                    sb.insert(sb.length - 2, ' ')
-                }
-            }
-
-            return sb.toString()
         }
     }
 }

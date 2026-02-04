@@ -34,10 +34,10 @@ if [[ -z "$VERSION" ]]; then
 fi
 
 ZIP_NAME=$(basename "$ZIP_PATH")
-REPO_URL_BASE=${REPO_URL_BASE:-"https://raw.githubusercontent.com/Dmytro332116/Rewiew-Code/main/docs"}
+REPO_URL_BASE=${REPO_URL_BASE:-"https://dmytro332116.github.io/Plugin-PhpStorm-2-"}
 ZIP_URL="$REPO_URL_BASE/$ZIP_NAME"
 
-cat > docs/updatePlugins.xml <<XML
+cat > docs/plugins.xml <<XML
 <plugins>
   <plugin id="com.rewiew.autofmt" version="$VERSION" url="$ZIP_URL">
     <name>Rewiew Code Formatter</name>
@@ -49,4 +49,4 @@ cat > docs/updatePlugins.xml <<XML
 XML
 
 echo "Built: $ZIP_NAME"
-echo "Repository: docs/updatePlugins.xml"
+echo "Repository: docs/plugins.xml"

@@ -26,7 +26,7 @@ if "%VERSION%"=="" (
 )
 
 for %%f in ("%ZIP_PATH%") do set ZIP_NAME=%%~nxf
-set REPO_URL_BASE=https://raw.githubusercontent.com/Dmytro332116/Rewiew-Code/main/docs
+set REPO_URL_BASE=https://dmytro332116.github.io/Plugin-PhpStorm-2-
 set ZIP_URL=%REPO_URL_BASE%/%ZIP_NAME%
 
 (
@@ -38,8 +38,8 @@ set ZIP_URL=%REPO_URL_BASE%/%ZIP_NAME%
   echo     ^<idea-version since-build="243" /^>
   echo   ^</plugin^>
   echo ^</plugins^>
-) > docs\updatePlugins.xml
+) > docs\plugins.xml
 
 echo Built: %ZIP_NAME%
-echo Repository: docs\updatePlugins.xml
+echo Repository: docs\plugins.xml
 endlocal

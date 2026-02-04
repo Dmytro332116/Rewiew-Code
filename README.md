@@ -29,7 +29,7 @@ To build and generate a custom plugin repository (for **Manage Plugin Repositori
    - `docs/updatePlugins.xml`
 
 Use this URL in PhpStorm:
-`https://raw.githubusercontent.com/Dmytro332116/Rewiew-Code/main/docs/updatePlugins.xml`
+`https://dmytro332116.github.io/Plugin-PhpStorm-2-/plugins.xml`
 
 ## Configuration
 
